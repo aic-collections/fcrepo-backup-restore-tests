@@ -57,7 +57,7 @@ class ThreadHandler(threading.Thread):
 
 config = yaml.safe_load(open(args.config))
 print()
-print("Config:")
+print("load-resources-multithreaded: Config:")
 print(config)
 print()
 
@@ -67,7 +67,7 @@ c_counter = 0
 s_counter = 0
 
 # Make sure container exists
-requests.put(config["fcrepo"]["base"])
+requests.put(config["fcrepo"]["base"], auth=(config["username"], config["password"]))
 
 # Insert the relations
 relations = GraphOperation(config)
@@ -115,8 +115,5 @@ print()
 print("Verify the load: ")
 print("./test-gets --config " + args.config + " --data " + loaded_uris_file)
 print()
-
-
-
 
 

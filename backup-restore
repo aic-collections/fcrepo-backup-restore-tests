@@ -33,7 +33,11 @@ fcrepo = '/'.join(config["fcrepo"]["base"].split('/')[:-2])
 
 print()
 print("Loading sample data...")
-load = subprocess.run(["./load-resources-singlethreaded", "--config", args.config], stdout=subprocess.PIPE)
+if config['threads'] > 1:
+    load = subprocess.run(["./load-resources-multithreaded", "--config", args.config], stdout=subprocess.PIPE)
+else:
+    load = subprocess.run(["./load-resources-singlethreaded", "--config", args.config], stdout=subprocess.PIPE)
+    
 print(load.stdout.decode("utf-8"))
 with open(br_log_file, 'w') as f:
     f.write(load.stdout.decode("utf-8"))
@@ -63,7 +67,7 @@ if verify_load.stderr is not None:
 
 sleep(3)
 print("Performing backup...")
-backup = requests.post(fcrepo + "/fcr:backup")
+backup = requests.post(fcrepo + "/fcr:backup", auth=(config['username'], config['password']))
 backup_location = backup.text
 
 print("Response status: " + str(backup.status_code))
@@ -74,7 +78,7 @@ sleep(10)
 
 print()
 print("Restoring the repository...")
-restore = requests.post(fcrepo + "/fcr:restore", data=backup_location)
+restore = requests.post(fcrepo + "/fcr:restore", data=backup_location, auth=(config['username'], config['password']))
 print("Response status: " + str(restore.status_code))
 print("Sleep for 10 seconds, let fedora rest a sec.")
 sleep(10)
