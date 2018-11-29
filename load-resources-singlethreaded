@@ -17,7 +17,7 @@ from modules.helpers import get_hexdec_combos
 
 config = yaml.safe_load(open(args.config))
 print()
-print("Config:")
+print("load-resources-singlethreaded: Config:")
 print(config)
 print()
 
@@ -27,7 +27,7 @@ c_counter = 0
 s_counter = 0
 
 # Make sure container exists
-requests.put(config["fcrepo"]["base"])
+requests.put(config["fcrepo"]["base"], auth=(config["username"], config["password"]))
 
 # Insert the relations
 relations = GraphOperation(config)

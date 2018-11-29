@@ -3,4 +3,6 @@
 
 *.txt
 *.log
+env
+venv
 

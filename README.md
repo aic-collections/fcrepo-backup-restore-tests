@@ -6,7 +6,7 @@ Scripts to load resources to Fedora and that can check the status of those resou
 
 ### Prerequisites
 
-Python3 (tested with 3.5)
+Python3 (tested with 3.6)
 
 ### Installing
 

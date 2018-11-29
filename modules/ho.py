@@ -20,6 +20,9 @@ class HTTPOperation:
         self.SKOS = Namespace("http://www.w3.org/2004/02/skos/core#")
         self.nsdict = dict(skos=self.SKOS)
 
+    def get_auth(self): 
+       return (self.config["username"], self.config["password"]) 
+
     def delete_request(self, uri):
         st = datetime.datetime.now()
         starttime = strftime("%Y-%m-%d %H:%M:%S", gmtime())
@@ -29,7 +32,7 @@ class HTTPOperation:
         httperror = 1
         with requests.Session() as sess:
             try:
-                r = sess.delete(uri)
+                r = sess.delete(uri,  auth=self.get_auth())
                 httperror = 0
                 response_status_code = r.status_code
                 if r.status_code == 204:
@@ -73,7 +76,7 @@ class HTTPOperation:
         httperror = 1
         with requests.Session() as sess:
             try:
-                r = sess.get(uri, headers=headers)
+                r = sess.get(uri, headers=headers,  auth=self.get_auth())
                 httperror = 0
                 response_status_code = r.status_code
                 if r.status_code == 200:
@@ -112,7 +115,7 @@ class HTTPOperation:
             tempg += g.triples( (URIRef(s), None, None) )
             d = tempg.serialize(format="nt", initNs=self.nsdict)
             
-            response = requests.put(s, data=d, headers={"Content-type": "application/n-triples"})
+            response = requests.put(s, auth=self.get_auth(), data=d, headers={"Content-type": "application/n-triples"})
             
             oline = s+ "; " + str(response.status_code) + "; "
             self.counter.results.append(oline)
@@ -138,7 +141,7 @@ class HTTPOperation:
         httperror = 1
         with requests.Session() as sess:
             try:
-                r = sess.put(new_s, data=d, headers=headers)
+                r = sess.put(new_s, data=d, headers=headers, auth=self.get_auth())
                 httperror = 0
                 response_status_code = r.status_code
                 if r.status_code == 201:
@@ -184,7 +187,7 @@ class HTTPOperation:
         
             with requests.Session() as sess:
                 try:
-                    r = sess.put(new_s_binary, data=file, headers=headers)
+                    r = sess.put(new_s_binary, data=file, headers=headers,  auth=self.get_auth())
                     httperror_binary = 0
                     response_status_code_binary = r.status_code
                     if r.status_code == 201:
